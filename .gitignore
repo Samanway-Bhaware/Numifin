@@ -85,7 +85,8 @@ ehthumbs.db
 
 # sentry
 .sentryclirc
-
+.agents
+.claude
 # playwright
 /test-results/
 /playwright-report/
