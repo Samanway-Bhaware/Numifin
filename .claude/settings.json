@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/samanway/Downloads/**)",
+      "Bash(npm --version)",
+      "Bash(npm install:*)",
+      "Bash(node .claude/skills/impeccable/scripts/load-context.mjs)",
+      "Bash(node /Users/samanway/.claude/plugins/cache/impeccable/impeccable/3.0.7/skills/impeccable/scripts/load-context.mjs)",
+      "Bash(ls \"/Users/samanway/Desktop/NumiFin/numifin/app/\\(auth\\)/\")",
+      "Bash(cat \"/Users/samanway/Desktop/NumiFin/numifin/app/\\(auth\\)/login/page.tsx\")",
+      "Bash(cat \"/Users/samanway/Desktop/NumiFin/numifin/app/\\(auth\\)/login/\"*.tsx)",
+      "Bash(cat \"/Users/samanway/Desktop/NumiFin/numifin/app/\\(auth\\)/layout.tsx\")",
+      "Read(//Users/samanway/.claude/plugins/cache/impeccable/impeccable/3.0.7/skills/impeccable/reference/**)"
+    ],
+    "additionalDirectories": [
+      "/Users/samanway/Desktop/NumiFin/numifin/app/api/documents"
+    ]
+  }
+}
