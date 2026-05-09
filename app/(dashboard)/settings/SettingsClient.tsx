@@ -4,12 +4,14 @@ import { useState } from "react";
 import { toast } from "sonner";
 import {
   Bot, Database, User, Shield, Eye, EyeOff, Save,
-  CheckCircle2, Sparkles, X,
+  CheckCircle2, Sparkles, X, CreditCard, ArrowUpRight, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import type { Subscription } from "@/lib/subscription";
+import { PLANS } from "@/lib/stripe";
 
 const GEMINI_MODELS = [
   { value: "gemini-3-flash-preview", label: "Gemini 2.5 Flash", desc: "Fast · default" },
@@ -29,6 +31,7 @@ interface SettingsClientProps {
   hasCustomDb: boolean;
   email: string;
   fullName: string;
+  subscription: Subscription;
 }
 
 export function SettingsClient({
@@ -37,7 +40,24 @@ export function SettingsClient({
   hasCustomDb,
   email,
   fullName,
+  subscription,
 }: SettingsClientProps) {
+  // ── Billing state ─────────────────────────────────────────
+  const [loadingPortal, setLoadingPortal] = useState(false);
+
+  async function handleManageBilling() {
+    setLoadingPortal(true);
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else toast.error(data.error ?? "Could not open billing portal");
+    } catch {
+      toast.error("Failed to open billing portal");
+    } finally {
+      setLoadingPortal(false);
+    }
+  }
   // ── AI state ──────────────────────────────────────────────
   const initProvider = currentModel.startsWith("gemini") ? "gemini" : "openai";
   const [useCustomAI, setUseCustomAI] = useState(hasCustomKey);
@@ -135,8 +155,104 @@ export function SettingsClient({
     }
   }
 
+  const plan = subscription.plan;
+  const planInfo = PLANS[plan];
+  const isActive = subscription.status === "active" || subscription.status === "trialing";
+  const periodEnd = subscription.current_period_end
+    ? new Date(subscription.current_period_end).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : null;
+
   return (
     <div className="max-w-2xl space-y-5">
+
+      {/* ── Billing ── */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4 text-gray-400" />
+            <CardTitle>Billing & Plan</CardTitle>
+          </div>
+          <CardDescription>Manage your subscription and payment details</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Current plan */}
+          <div className="flex items-center justify-between rounded-lg border border-[#E1E1E1] bg-[#F7F7F5] px-4 py-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[rgba(148,175,116,0.15)]">
+                <Zap className="h-4 w-4 text-[#4a6e30]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{planInfo.name} plan</p>
+                <p className="text-xs text-gray-400">
+                  {plan === "starter"
+                    ? "Free forever"
+                    : isActive
+                    ? `$${planInfo.price}/month${periodEnd ? ` · renews ${periodEnd}` : ""}`
+                    : `Canceled${periodEnd ? ` · access until ${periodEnd}` : ""}`}
+                </p>
+              </div>
+            </div>
+            <span
+              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                isActive
+                  ? "bg-[rgba(148,175,116,0.15)] text-[#4a6e30]"
+                  : subscription.status === "past_due"
+                  ? "bg-amber-50 text-amber-700"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+            >
+              {isActive ? "Active" : subscription.status === "past_due" ? "Past due" : "Canceled"}
+            </span>
+          </div>
+
+          {/* Plan features */}
+          <ul className="grid grid-cols-2 gap-1.5">
+            {planInfo.features.map((f) => (
+              <li key={f} className="flex items-center gap-2 text-xs text-gray-600">
+                <CheckCircle2 className="h-3.5 w-3.5 text-[#94af74] shrink-0" />
+                {f}
+              </li>
+            ))}
+          </ul>
+
+          {/* Actions */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            {plan === "starter" && (
+              <>
+                <a href="/api/stripe/checkout?plan=pro">
+                  <Button size="sm">
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                    Upgrade to Pro · $49/mo
+                  </Button>
+                </a>
+                <a href="/api/stripe/checkout?plan=team">
+                  <Button size="sm" variant="outline">
+                    Upgrade to Team · $149/mo
+                  </Button>
+                </a>
+              </>
+            )}
+            {plan === "pro" && (
+              <>
+                <a href="/api/stripe/checkout?plan=team">
+                  <Button size="sm">
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                    Upgrade to Team · $149/mo
+                  </Button>
+                </a>
+                <Button size="sm" variant="outline" onClick={handleManageBilling} loading={loadingPortal}>
+                  Manage billing
+                </Button>
+              </>
+            )}
+            {plan === "team" && (
+              <Button size="sm" variant="outline" onClick={handleManageBilling} loading={loadingPortal}>
+                Manage billing
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* ── Account ── */}
       <Card>

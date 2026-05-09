@@ -36,14 +36,14 @@ export default function LandingPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "1vh 1vh",
+          padding: "1vh",
           backgroundColor: "#F7F7F5",
         }}
       >
       <div
         style={{
           position: "relative",
-          width: "98vw",
+          width: "99vw",
           height: "98vh",
           overflow: "hidden",
           borderRadius: "17px",
@@ -91,7 +91,7 @@ export default function LandingPage() {
           </span>
 
           {/* Nav links pill */}
-          <div
+          {/* <div
             style={{
               display: "flex",
               alignItems: "flex-end",
@@ -121,7 +121,7 @@ export default function LandingPage() {
                 {item}
               </a>
             ))}
-          </div>
+          </div> */}
 
           {/* Auth buttons */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -855,13 +855,13 @@ export default function LandingPage() {
                   </Link>
                 </td>
                 <td className="pro-col">
-                  <Link href="/signup" style={{ display: "inline-block", padding: "10px 20px", borderRadius: "8px", backgroundColor: "#94af74", fontSize: "13px", fontWeight: 500, color: "#1a1a1a", textDecoration: "none" }}>
+                  <Link href="/api/stripe/checkout?plan=pro" style={{ display: "inline-block", padding: "10px 20px", borderRadius: "8px", backgroundColor: "#94af74", fontSize: "13px", fontWeight: 500, color: "#1a1a1a", textDecoration: "none" }}>
                     Start with Pro
                   </Link>
                 </td>
                 <td>
-                  <Link href="/signup" style={{ display: "inline-block", padding: "10px 20px", borderRadius: "8px", border: "1px solid rgba(26,26,26,0.15)", fontSize: "13px", fontWeight: 500, color: "#1a1a1a", textDecoration: "none" }}>
-                    Talk to us
+                  <Link href="/api/stripe/checkout?plan=team" style={{ display: "inline-block", padding: "10px 20px", borderRadius: "8px", border: "1px solid rgba(26,26,26,0.15)", fontSize: "13px", fontWeight: 500, color: "#1a1a1a", textDecoration: "none" }}>
+                    Get Team
                   </Link>
                 </td>
               </tr>

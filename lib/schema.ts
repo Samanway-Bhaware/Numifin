@@ -85,6 +85,18 @@ export interface AgentActivity {
   created_at: string;
 }
 
+export interface Subscription {
+  id: string;
+  user_id: string;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  plan: "starter" | "pro" | "team";
+  status: "active" | "canceled" | "past_due" | "trialing" | "incomplete";
+  current_period_end: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AuditLog {
   id: string;
   user_id: string;

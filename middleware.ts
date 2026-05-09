@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
-const PUBLIC_PATHS = ["/", "/login", "/signup", "/auth/callback", "/api/validate-key"];
+const PUBLIC_PATHS = ["/", "/login", "/signup", "/auth/callback", "/api/validate-key", "/api/stripe/webhook"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
