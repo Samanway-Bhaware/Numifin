@@ -46,7 +46,7 @@ export async function POST(_req: NextRequest) {
 
   // Run agent
   const results = await classifyTransactions(transactions, userPrompts, categories, {
-    apiKey: config?.apiKey,
+    apiKey: config?.apiKey ?? undefined,
     model: config?.model,
   });
 

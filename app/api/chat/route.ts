@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const transactions: Transaction[] = txRes.data ?? [];
 
   const response = await askCFO(query, transactions, {
-    apiKey: config?.apiKey,
+    apiKey: config?.apiKey ?? undefined,
     model: config?.model,
   });
 

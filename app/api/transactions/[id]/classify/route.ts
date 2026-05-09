@@ -36,7 +36,7 @@ export async function POST(
 
   // Run bookkeeper agent
   const result = await classifySingle(transaction, userPrompts, categories, {
-    apiKey: config?.apiKey,
+    apiKey: config?.apiKey ?? undefined,
     model: config?.model,
   });
 

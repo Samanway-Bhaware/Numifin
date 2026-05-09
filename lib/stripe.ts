@@ -1,7 +1,22 @@
 import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-04-22.dahlia" as Stripe.LatestApiVersion,
+// Lazy singleton — not initialized at module load so builds succeed without env vars
+let _stripe: Stripe | null = null;
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      apiVersion: "2026-04-22.dahlia" as any,
+    });
+  }
+  return _stripe;
+}
+
+/** @deprecated use getStripe() */
+export const stripe = new Proxy({} as Stripe, {
+  get(_t, prop) {
+    return (getStripe() as unknown as Record<string | symbol, unknown>)[prop];
+  },
 });
 
 export const PLANS = {
